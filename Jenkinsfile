@@ -43,11 +43,17 @@ pipeline {
                 sh 'trivy fs --format table -o trivy-fs-report.html .'
             }
         }
+        stage('Stop the existing container') {
+            steps {
+                    
+                    // Stop and remove the existing container if it exists
+                    sh 'docker stop devsecops'
+                }   
+        }
         stage('remove the existing container') {
             steps {
                     
                     // Stop and remove the existing container if it exists
-                    sh 'docker stop devsecops',
                     sh 'docker rm devsecops'
                 }   
         }
