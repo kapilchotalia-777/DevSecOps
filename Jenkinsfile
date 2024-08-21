@@ -43,17 +43,25 @@ pipeline {
                 sh 'trivy fs --format table -o trivy-fs-report.html .'
             }
         }
-        stage('create docker image') {
+        stage('remove the existing container') {
+            steps {
+                    
+                    // Stop and remove the existing container if it exists
+                    sh 'docker stop devsecops',
+                    sh 'docker rm devsecops'
+                }   
+        }
+        stage('Build new docker image') {
             steps {
                     dir('/var/lib/jenkins/workspace/DevSecOps CI-CD') {
                         sh 'docker build -t devsecops .'
                         }
                 }   
         }
-        stage('Deploy using docker image') {
+        stage('Run new docker image') {
             steps {
                     dir('/var/lib/jenkins/workspace/DevSecOps CI-CD') {
-                        sh 'docker run -d -p 3000:3000 devsecops'
+                        sh 'docker run -d --name devsecops -p 3000:3000 devsecops'
                         }
                 }   
         }
